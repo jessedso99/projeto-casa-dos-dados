@@ -28,12 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            btnApiRequest = new Button();
+            SuspendLayout();
+            // 
+            // btnApiRequest
+            // 
+            btnApiRequest.Location = new Point(138, 95);
+            btnApiRequest.Name = "btnApiRequest";
+            btnApiRequest.Size = new Size(75, 23);
+            btnApiRequest.TabIndex = 0;
+            btnApiRequest.Text = "Consultar";
+            btnApiRequest.UseVisualStyleBackColor = true;
+            btnApiRequest.Click += btnApiRequest_Click;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(627, 360);
+            Controls.Add(btnApiRequest);
+            Name = "Form1";
+            Text = "OfBusiness Tool - Casa dos Dados";
+            Load += Form1_Load;
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private Button btnApiRequest;
     }
 }
