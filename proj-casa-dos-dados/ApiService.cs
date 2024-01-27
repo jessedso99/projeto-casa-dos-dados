@@ -32,8 +32,9 @@ namespace proj_casa_dos_dados
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string content = await response.Content.ReadAsStringAsync();
-                    return content;
+                    //string content = await response.Content.ReadAsStringAsync();
+                    //return content;
+                    return await response.Content.ReadAsStringAsync();
                 }
                 else
                 {
@@ -43,14 +44,3 @@ namespace proj_casa_dos_dados
         }
     }
 }
-
-
-//string jsonResponse = "[{\"Id\":1,\"Name\":\"John\",\"Age\":30},{\"Id\":2,\"Name\":\"Alice\",\"Age\":25}]";
-//List<cnpj> dados = JsonConvert.DeserializeObject<List<cnpj>>(jsonResponse);
-//List<string> tabularData = OrganizeDataIntoTabularFormat(dados);
-
-//Console.WriteLine("Id\tName\tAge");
-//foreach (cnpj encontardos in dados)
-//{
-//    Console.WriteLine($"{encontardos.Id}\t{encontardos.Name}\t{encontardos.Age}");
-//}

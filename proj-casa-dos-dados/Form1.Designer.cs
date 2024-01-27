@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             btnApiRequest = new Button();
+            btn_gerarExcel = new Button();
             SuspendLayout();
             // 
             // btnApiRequest
@@ -41,11 +42,22 @@
             btnApiRequest.UseVisualStyleBackColor = true;
             btnApiRequest.Click += btnApiRequest_Click;
             // 
+            // btn_gerarExcel
+            // 
+            btn_gerarExcel.Location = new Point(168, 187);
+            btn_gerarExcel.Name = "btn_gerarExcel";
+            btn_gerarExcel.Size = new Size(75, 23);
+            btn_gerarExcel.TabIndex = 1;
+            btn_gerarExcel.Text = "Gerar Excel";
+            btn_gerarExcel.UseVisualStyleBackColor = true;
+            btn_gerarExcel.Click += btn_gerarExcel_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(627, 360);
+            Controls.Add(btn_gerarExcel);
             Controls.Add(btnApiRequest);
             Name = "Form1";
             Text = "OfBusiness Tool - Casa dos Dados";
@@ -56,5 +68,6 @@
         #endregion
 
         private Button btnApiRequest;
+        private Button btn_gerarExcel;
     }
 }
