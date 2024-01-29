@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
+using System.Diagnostics;
+using System.Windows.Forms.Design;
 
 namespace proj_casa_dos_dados
 {
@@ -15,17 +17,21 @@ namespace proj_casa_dos_dados
         {
             List<string> cnpjResponses = myForm.GetApiResponses();
 
-            //foreach (string cnpj in cnpjResponses)
             foreach (string jsonResponse in cnpjResponses)
             {
                 //CnpjData cnpjData = JsonConvert.DeserializeObject<CnpjData>(jsonResponse);
-                //MessageBox.Show(jsonResponse);
-                
                 CnpjDataContainer dataContainer = JsonConvert.DeserializeObject<CnpjDataContainer>(jsonResponse);
                 List<CnpjData> cnpj_DataList = dataContainer?.data?.cnpj;
 
                 //ExportToExcel(new List<CnpjData> { cnpj_DataList });
-                ExportToExcel(cnpj_DataList);
+                if (cnpj_DataList==null)
+                {
+                    MessageBox.Show("Não há resultados para a pesquisa realizada");
+                }
+                else 
+                {
+                    ExportToExcel(cnpj_DataList);
+                }
             }
         }
 
@@ -35,10 +41,8 @@ namespace proj_casa_dos_dados
             // Create a new Excel package
             using (ExcelPackage excelPackage = new ExcelPackage())
             {
-                // Add a worksheet
                 ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("CnpjData");
 
-                // Add headers
                 worksheet.Cells[1, 1].Value = "Cnpj";
                 worksheet.Cells[1, 2].Value = "Cnpj Raiz";
                 worksheet.Cells[1, 3].Value = "Filial Numero";
@@ -51,12 +55,11 @@ namespace proj_casa_dos_dados
                 worksheet.Cells[1, 10].Value = "Bairro";
                 worksheet.Cells[1, 11].Value = "Municipio";
                 worksheet.Cells[1, 12].Value = "Uf";
-                //worksheet.Cells[1, 13].Value = "Atividade Principal Codigo";
-                //worksheet.Cells[1, 14].Value = "Atividade Principal Descricao";
+                worksheet.Cells[1, 13].Value = "Atividade Principal Codigo";
+                worksheet.Cells[1, 14].Value = "Atividade Principal Descricao";
                 worksheet.Cells[1, 15].Value = "Cnpj MEI";
                 worksheet.Cells[1, 16].Value = "Versao";
 
-                // Add data rows
                 int row = 2;
                 foreach (CnpjData cnpjData in cnpjDataList)
                 {
@@ -72,8 +75,8 @@ namespace proj_casa_dos_dados
                     worksheet.Cells[row, 10].Value = cnpjData.bairro;
                     worksheet.Cells[row, 11].Value = cnpjData.municipio;
                     worksheet.Cells[row, 12].Value = cnpjData.uf;
-                    //worksheet.Cells[row, 13].Value = cnpjData.AtividadePrincipal.codigo;
-                    //worksheet.Cells[row, 14].Value = cnpjData.AtividadePrincipal.descricao;
+                    worksheet.Cells[row, 13].Value = cnpjData.atividade_principal.codigo;
+                    worksheet.Cells[row, 14].Value = cnpjData.atividade_principal.descricao;
                     worksheet.Cells[row, 15].Value = cnpjData.cnpj_mei;
                     worksheet.Cells[row, 16].Value = cnpjData.versao;
 
@@ -84,7 +87,7 @@ namespace proj_casa_dos_dados
                 string fullPath = @"C:\Users\jesse\Downloads\CnpjData.xlsx";
                 FileInfo excelFile = new FileInfo(fullPath);
                 excelPackage.SaveAs(excelFile);
-                Console.WriteLine("Excel file created and data exported.");
+                MessageBox.Show("Excel file created and data exported.");
             }
         }
     }

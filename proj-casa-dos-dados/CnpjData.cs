@@ -23,7 +23,7 @@ namespace proj_casa_dos_dados
         public string bairro { get; set; }
         public string municipio { get; set; }
         public string uf { get; set; }
-        public AtividadePrincipal AtividadePrincipal { get; set; }
+        public CnpjDataAtividadePrincipal atividade_principal { get; set; }
         public bool cnpj_mei { get; set; }
         public string versao { get; set; }
     }

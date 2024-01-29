@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace proj_casa_dos_dados
 {
-    public class AtividadePrincipal
+    public class CnpjDataAtividadePrincipal
     {
         public string codigo { get; set; }
         public string descricao { get; set; }
