@@ -13,9 +13,11 @@ namespace proj_casa_dos_dados
 {
     public class gerarExcel
     {
+        private static int contCnpjResponses;
         public static void excelProcess(Form1 myForm)
         {
             List<string> cnpjResponses = myForm.GetApiResponses();
+            contCnpjResponses= cnpjResponses.Count;
 
             foreach (string jsonResponse in cnpjResponses)
             {
@@ -61,27 +63,31 @@ namespace proj_casa_dos_dados
                 worksheet.Cells[1, 16].Value = "Versao";
 
                 int row = 2;
-                foreach (CnpjData cnpjData in cnpjDataList)
-                {
-                    worksheet.Cells[row, 1].Value = cnpjData.cnpj;
-                    worksheet.Cells[row, 2].Value = cnpjData.cnpj_raiz;
-                    worksheet.Cells[row, 3].Value = cnpjData.filial_numero;
-                    worksheet.Cells[row, 4].Value = cnpjData.razao_social;
-                    worksheet.Cells[row, 5].Value = cnpjData.nome_fantasia;
-                    worksheet.Cells[row, 6].Value = cnpjData.data_abertura;
-                    worksheet.Cells[row, 7].Value = cnpjData.situacao_cadastral;
-                    worksheet.Cells[row, 8].Value = cnpjData.logradouro;
-                    worksheet.Cells[row, 9].Value = cnpjData.numero;
-                    worksheet.Cells[row, 10].Value = cnpjData.bairro;
-                    worksheet.Cells[row, 11].Value = cnpjData.municipio;
-                    worksheet.Cells[row, 12].Value = cnpjData.uf;
-                    worksheet.Cells[row, 13].Value = cnpjData.atividade_principal.codigo;
-                    worksheet.Cells[row, 14].Value = cnpjData.atividade_principal.descricao;
-                    worksheet.Cells[row, 15].Value = cnpjData.cnpj_mei;
-                    worksheet.Cells[row, 16].Value = cnpjData.versao;
+                int addRows = 0;
+                do {
+                    foreach (CnpjData cnpjData in cnpjDataList)
+                    {
+                        worksheet.Cells[row, 1].Value = cnpjData.cnpj;
+                        worksheet.Cells[row, 2].Value = cnpjData.cnpj_raiz;
+                        worksheet.Cells[row, 3].Value = cnpjData.filial_numero;
+                        worksheet.Cells[row, 4].Value = cnpjData.razao_social;
+                        worksheet.Cells[row, 5].Value = cnpjData.nome_fantasia;
+                        worksheet.Cells[row, 6].Value = cnpjData.data_abertura;
+                        worksheet.Cells[row, 7].Value = cnpjData.situacao_cadastral;
+                        worksheet.Cells[row, 8].Value = cnpjData.logradouro;
+                        worksheet.Cells[row, 9].Value = cnpjData.numero;
+                        worksheet.Cells[row, 10].Value = cnpjData.bairro;
+                        worksheet.Cells[row, 11].Value = cnpjData.municipio;
+                        worksheet.Cells[row, 12].Value = cnpjData.uf;
+                        worksheet.Cells[row, 13].Value = cnpjData.atividade_principal.codigo;
+                        worksheet.Cells[row, 14].Value = cnpjData.atividade_principal.descricao;
+                        worksheet.Cells[row, 15].Value = cnpjData.cnpj_mei;
+                        worksheet.Cells[row, 16].Value = cnpjData.versao;
 
-                    row++;
-                }
+                        row++;
+                        addRows++;
+                    }
+                } while ((contCnpjResponses/20)+1>= addRows);
 
                 // Save the Excel package to a file
                 string fullPath = @"C:\Users\jesse\Downloads\CnpjData.xlsx";

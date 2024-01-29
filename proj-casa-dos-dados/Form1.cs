@@ -22,12 +22,17 @@ namespace proj_casa_dos_dados
 
         private async void btnApiRequest_Click(object sender, EventArgs e)
         {
-            //await PerformApiRequest;
             try
             {
-                //string apiResponse = await ApiService.PerformApiRequestAsync();
-                //MessageBox.Show($"API Request completed. Response: {apiResponse}");
-                apiResponses.Add(await ApiService.PerformApiRequestAsync());
+                int contPag = 0;
+                do
+                {
+                    apiResponses.Add(await ApiService.PerformApiRequestAsync());
+                    contPag++;
+                } while (((ApiService.countJsonResult) / 20)+1 >= contPag);
+                
+                //Console.WriteLine(ApiService.countJsonResult);
+
                 MessageBox.Show("API request completed!");
             }
             catch (Exception ex)

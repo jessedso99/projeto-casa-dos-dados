@@ -16,6 +16,8 @@ namespace proj_casa_dos_dados
 {
     public class ApiService //internal class 
     {
+        public static int countJsonResult;
+        static int countPag = 0;
         public static async Task<string> PerformApiRequestAsync()
         {
             string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36";
@@ -24,16 +26,18 @@ namespace proj_casa_dos_dados
             {
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
 
-                var json = "{\"query\":{\"termo\":[],\"atividade_principal\":[],\"natureza_juridica\":[],\"uf\":[\"CE\"],\"municipio\":[],\"bairro\":[],\"situacao_cadastral\":\"ATIVA\",\"cep\":[],\"ddd\":[]},\"range_query\":{\"data_abertura\":{\"lte\":null,\"gte\":\"2024-01-28\"},\"capital_social\":{\"lte\":null,\"gte\":null}},\"extras\":{\"somente_mei\":false,\"excluir_mei\":true,\"com_email\":false,\"incluir_atividade_secundaria\":false,\"com_contato_telefonico\":false,\"somente_fixo\":false,\"somente_celular\":false,\"somente_matriz\":false,\"somente_filial\":false},\"page\":1}";
+                countPag++;
+                var json = "{\"query\":{\"termo\":[],\"atividade_principal\":[],\"natureza_juridica\":[],\"uf\":[\"CE\"],\"municipio\":[],\"bairro\":[],\"situacao_cadastral\":\"ATIVA\",\"cep\":[],\"ddd\":[]},\"range_query\":{\"data_abertura\":{\"lte\":null,\"gte\":\"2024-01-26\"},\"capital_social\":{\"lte\":null,\"gte\":null}},\"extras\":{\"somente_mei\":false,\"excluir_mei\":true,\"com_email\":true,\"incluir_atividade_secundaria\":false,\"com_contato_telefonico\":true,\"somente_fixo\":false,\"somente_celular\":false,\"somente_matriz\":false,\"somente_filial\":false},\"page\":" + countPag + "}";
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
                 string apiUrl = "https://api.casadosdados.com.br/v2/public/cnpj/search";
 
                 var response = await client.PostAsync(apiUrl, data);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseContent);
+                countJsonResult = int.Parse((jsonResponse.data.count).ToString());
 
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && jsonResponse?.data != null && jsonResponse.data.count > 0)
                 {
-                    //string content = await response.Content.ReadAsStringAsync();
-                    //return content;
                     return await response.Content.ReadAsStringAsync();
                 }
                 else
