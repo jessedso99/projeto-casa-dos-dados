@@ -34,7 +34,7 @@
             // 
             // btnApiRequest
             // 
-            btnApiRequest.Location = new Point(138, 95);
+            btnApiRequest.Location = new Point(44, 41);
             btnApiRequest.Name = "btnApiRequest";
             btnApiRequest.Size = new Size(75, 23);
             btnApiRequest.TabIndex = 0;
@@ -44,7 +44,7 @@
             // 
             // btn_gerarExcel
             // 
-            btn_gerarExcel.Location = new Point(168, 187);
+            btn_gerarExcel.Location = new Point(213, 41);
             btn_gerarExcel.Name = "btn_gerarExcel";
             btn_gerarExcel.Size = new Size(75, 23);
             btn_gerarExcel.TabIndex = 1;
@@ -56,7 +56,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(627, 360);
+            ClientSize = new Size(324, 105);
             Controls.Add(btn_gerarExcel);
             Controls.Add(btnApiRequest);
             Name = "Form1";

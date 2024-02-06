@@ -11,6 +11,7 @@ using proj_casa_dos_dados;
 //Install-Package System.Net.Http
 //Install-Package Newtonsoft.Json
 //Install-Package EPPlus // export to excel
+//NuGet\Install-Package HtmlAgilityPack -Version 1.11.58
 
 namespace proj_casa_dos_dados
 {
@@ -27,7 +28,7 @@ namespace proj_casa_dos_dados
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
 
                 countPag++;
-                var json = "{\"query\":{\"termo\":[],\"atividade_principal\":[],\"natureza_juridica\":[],\"uf\":[\"CE\"],\"municipio\":[],\"bairro\":[],\"situacao_cadastral\":\"ATIVA\",\"cep\":[],\"ddd\":[]},\"range_query\":{\"data_abertura\":{\"lte\":null,\"gte\":\"2024-01-26\"},\"capital_social\":{\"lte\":null,\"gte\":null}},\"extras\":{\"somente_mei\":false,\"excluir_mei\":true,\"com_email\":true,\"incluir_atividade_secundaria\":false,\"com_contato_telefonico\":true,\"somente_fixo\":false,\"somente_celular\":false,\"somente_matriz\":false,\"somente_filial\":false},\"page\":" + countPag + "}";
+                var json = "{\"query\":{\"termo\":[],\"atividade_principal\":[],\"natureza_juridica\":[],\"uf\":[\"AC\"],\"municipio\":[],\"bairro\":[],\"situacao_cadastral\":\"ATIVA\",\"cep\":[],\"ddd\":[]},\"range_query\":{\"data_abertura\":{\"lte\":null,\"gte\":\"2024-01-31\"},\"capital_social\":{\"lte\":null,\"gte\":null}},\"extras\":{\"somente_mei\":false,\"excluir_mei\":true,\"com_email\":true,\"incluir_atividade_secundaria\":false,\"com_contato_telefonico\":true,\"somente_fixo\":false,\"somente_celular\":false,\"somente_matriz\":false,\"somente_filial\":false},\"page\":" + countPag + "}";
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
                 string apiUrl = "https://api.casadosdados.com.br/v2/public/cnpj/search";
 

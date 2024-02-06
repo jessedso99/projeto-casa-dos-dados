@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms.Design;
+using HtmlAgilityPack;
+using System.Data.Common;
 
 namespace proj_casa_dos_dados
 {
@@ -24,7 +26,7 @@ namespace proj_casa_dos_dados
             ExportToExcel(cnpjResponses);
         }
 
-        static void ExportToExcel(List<string> cnpjResponses)//(List<CnpjData> cnpjDataList)
+        static async Task<string> ExportToExcel(List<string> cnpjResponses)//(List<CnpjData> cnpjDataList)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (ExcelPackage excelPackage = new ExcelPackage())
@@ -102,23 +104,64 @@ namespace proj_casa_dos_dados
 
                 //criando os links
                 string linkRaizSolucao = "https://casadosdados.com.br/solucao/cnpj";
+                //string linkRaizSolucao = "";
 
                 for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
                     string razaoSocialNovo = ReplaceCharacters(worksheet.Cells[row, 4].Value.ToString());
                     string cnpjNovo = ReplaceCharacters(worksheet.Cells[row, 1].Value.ToString());
-                    
+
                     string linkSolucaoCnpj = $"{linkRaizSolucao}/{razaoSocialNovo}-{cnpjNovo}";
                     worksheet.Cells[row, 19].Value = linkSolucaoCnpj;
+
+                }
+
+                WebScraper webScraperObj = new WebScraper();
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                {
+                    object cellValue = worksheet.Cells[row, 19].Value;
+                    string stringValue = cellValue?.ToString();
+
+
+                    string[] labels = { "E-MAIL", "Telefone" };
+                    int scrapeColIndex = 17;
+                    foreach (string label in labels)
+                    {
+                        worksheet.Cells[row, scrapeColIndex].Value = await webScraperObj.ScrapeNickname(stringValue, label);
+                        scrapeColIndex++;
+                    }
+                    
+
                 }
 
 
-                //salvando o arquivo
-                string fullPath = @"C:\Users\jesse\Downloads\CnpjData.xlsx";
-                FileInfo excelFile = new FileInfo(fullPath);
-                excelPackage.SaveAs(excelFile);
 
-                MessageBox.Show("Excel file created and data exported.");
+                //save the as excel file
+                SaveExcelFile(excelPackage);
+            }
+            return "teste";
+        }
+        private static void SaveExcelFile(ExcelPackage excelPackage)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
+                saveFileDialog.Title = "Save Excel File";
+                saveFileDialog.DefaultExt = "xlsx";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Save the ExcelPackage to the selected file path
+                        excelPackage.SaveAs(new System.IO.FileInfo(saveFileDialog.FileName));
+                        MessageBox.Show("Excel file saved successfully!", "Success");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error saving Excel file: {ex.Message}", "Error");
+                    }
+                }
             }
         }
 
@@ -132,7 +175,5 @@ namespace proj_casa_dos_dados
 
             return result;
         }
-
-
     }
 }
