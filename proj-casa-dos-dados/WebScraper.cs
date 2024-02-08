@@ -11,14 +11,13 @@ namespace proj_casa_dos_dados
 {
     class WebScraper
     {
-        public async Task<string> ScrapeNickname(string username, string label)
+        public async Task<string> ScrapeCnpjDados(string cnpjLink, string label)
         {
-            //string githubUrl = $"https://casadosdados.com.br/solucao/cnpj{username}";
-            string htmlContent = await DownloadHtmlAsync(username);// (githubUrl);
+            string htmlContent = await DownloadHtmlAsync(cnpjLink);
 
             if (!string.IsNullOrEmpty(htmlContent))
             {
-                return ExtractNickname(htmlContent, label);
+                return ExtractCnpjDados(htmlContent, label);
             }
             else
             {
@@ -35,18 +34,17 @@ namespace proj_casa_dos_dados
             }
         }
 
-        private string ExtractNickname(string htmlContent, string label)
+        private string ExtractCnpjDados(string htmlContent, string label)
         {
             HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
             document.LoadHtml(htmlContent);
 
-            // Use XPath to find the span element with the specified class
-            HtmlNode nicknameNode = document.DocumentNode.SelectSingleNode($"//p[@class='has-text-weight-bold' and text()='{label}']");//("//title");// span[@class='p-nickname vcard-username d-block']");
-            var valueNode = nicknameNode?.SelectSingleNode("following-sibling::p[not(contains(@data-v-81897e2b, '['))]/a");
+            // Usando XPath para achar os elementos com a classes especificada
+            HtmlNode cnpjNode = document.DocumentNode.SelectSingleNode($"//p[@class='has-text-weight-bold' and text()='{label}']");
+            var dadosCnpjNode = cnpjNode?.SelectSingleNode("following-sibling::p[not(contains(@data-v-81897e2b, '['))]/a");
 
-            // Check if the node is found
-            //return nicknameNode?.InnerText;
-            return valueNode?.InnerText?.Trim().ToLower();
+            // Checando se o node foi encontrado e retornando o seu valor
+            return dadosCnpjNode?.InnerText?.Trim().ToLower();
         }
     }
 

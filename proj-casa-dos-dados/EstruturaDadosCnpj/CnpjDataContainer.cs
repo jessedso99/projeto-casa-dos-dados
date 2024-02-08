@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace proj_casa_dos_dados
+namespace proj_casa_dos_dados.EstruturaDadosCnpj
 {
     public class CnpjDataContainer
     {

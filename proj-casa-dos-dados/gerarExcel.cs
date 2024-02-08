@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Windows.Forms.Design;
 using HtmlAgilityPack;
 using System.Data.Common;
+using proj_casa_dos_dados.EstruturaDadosCnpj;
 
 namespace proj_casa_dos_dados
 {
@@ -26,9 +27,9 @@ namespace proj_casa_dos_dados
             ExportToExcel(cnpjResponses);
         }
 
-        static async Task<string> ExportToExcel(List<string> cnpjResponses)//(List<CnpjData> cnpjDataList)
+        static async Task<string> ExportToExcel(List<string> cnpjResponses)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Definições do ExcelPackage (consultar documentação)
             using (ExcelPackage excelPackage = new ExcelPackage())
             {
                 ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("CnpjData");
@@ -46,7 +47,7 @@ namespace proj_casa_dos_dados
                         }
                         else if (contCnpjResponses > 1)
                         {
-                            //fim da lista de resultados
+                            //fim da lista de resultados (parece que ao fim de cada consulta a API tbm gera mais uma response com o resumo da consulta (status, count e pag:1))
                         }
                         else
                         {
@@ -102,9 +103,9 @@ namespace proj_casa_dos_dados
                     }
                 }
 
-                //criando os links
+                // Alguns dados estão em páginas específicas de cada CNPJ. É necessario um webscraping
+                // Criando os links de cada página a ser consultada
                 string linkRaizSolucao = "https://casadosdados.com.br/solucao/cnpj";
-                //string linkRaizSolucao = "";
 
                 for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
@@ -113,67 +114,63 @@ namespace proj_casa_dos_dados
 
                     string linkSolucaoCnpj = $"{linkRaizSolucao}/{razaoSocialNovo}-{cnpjNovo}";
                     worksheet.Cells[row, 19].Value = linkSolucaoCnpj;
-
                 }
 
+                // Chamando o webscraper para recuperar os dados (E-MAIL e Telefone)
                 WebScraper webScraperObj = new WebScraper();
                 for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
                     object cellValue = worksheet.Cells[row, 19].Value;
                     string stringValue = cellValue?.ToString();
 
-
                     string[] labels = { "E-MAIL", "Telefone" };
                     int scrapeColIndex = 17;
                     foreach (string label in labels)
                     {
-                        worksheet.Cells[row, scrapeColIndex].Value = await webScraperObj.ScrapeNickname(stringValue, label);
+                        worksheet.Cells[row, scrapeColIndex].Value = await webScraperObj.ScrapeCnpjDados(stringValue, label);
                         scrapeColIndex++;
                     }
-                    
-
                 }
 
-
-
-                //save the as excel file
+                //Salvar o ExcelPackage como arquivo Excel (xlsx)
                 SaveExcelFile(excelPackage);
             }
-            return "teste";
+            return "Processo Encerrado";
         }
+
+        // Regex para auxiliar na criação dos links das páginas de cada CNPJ
+        static string ReplaceCharacters(string input)
+        {
+            string result = Regex.Replace(input, @"[- ,.:;\\/]+", "-");
+            result = Regex.Replace(result, @"-+", "-");
+            result = Regex.Replace(result, @"&+", "e");
+            result = result.ToLower();
+
+            return result;
+        }
+
+        // Salva o ExcelPackage no path selecionado
         private static void SaveExcelFile(ExcelPackage excelPackage)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
                 saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
-                saveFileDialog.Title = "Save Excel File";
+                saveFileDialog.Title = "Salvar resultados da consulta";
                 saveFileDialog.DefaultExt = "xlsx";
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        // Save the ExcelPackage to the selected file path
                         excelPackage.SaveAs(new System.IO.FileInfo(saveFileDialog.FileName));
-                        MessageBox.Show("Excel file saved successfully!", "Success");
+                        MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error saving Excel file: {ex.Message}", "Error");
+                        MessageBox.Show($"Erro ao tentar salvar o arquivo: {ex.Message}", "Erro");
                     }
                 }
             }
-        }
-
-        static string ReplaceCharacters(string input)
-        {
-            string result = Regex.Replace(input, @"[- ,.:;\\/]+", "-");
-            // Replace consecutive dashes with a single dash
-            result = Regex.Replace(result, @"-+", "-");
-            result = Regex.Replace(result, @"&+", "e");
-            result = result.ToLower();
-
-            return result;
         }
     }
 }

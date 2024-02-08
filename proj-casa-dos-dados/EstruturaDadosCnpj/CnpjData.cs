@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using OfficeOpenXml;
 
-namespace proj_casa_dos_dados
+namespace proj_casa_dos_dados.EstruturaDadosCnpj
 {
     public class CnpjData
     {
