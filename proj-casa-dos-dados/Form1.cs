@@ -25,17 +25,39 @@ namespace proj_casa_dos_dados
             try
             {
                 int contPag = 0;
+                DateTime DataDeAbertura = dateTimePicker1.Value;
+                string strDataDeAbertura = DataDeAbertura.ToString("yyyy-MM-dd");
+
+                if (radioButton1.Checked)
+                {
+                    ApiService.dataDeAbertura = strDataDeAbertura;
+                }
+                else if (radioButton2.Checked)
+                {
+                    ApiService.dataDeAbertura = null;
+                }
+                else
+                {
+                    radioButton1.Checked = true;
+                    ApiService.dataDeAbertura = strDataDeAbertura;
+                }
+
+                // Realizando o request a agregando as responses na lista apiResponses
                 do
                 {
                     apiResponses.Add(await ApiService.PerformApiRequestAsync());
                     contPag++;
-                } while (((ApiService.countJsonResult) / 20) + 1 >= contPag);
 
-                MessageBox.Show("API request completed!");
+                    // Setando o valores para a Progressbar
+                    progressBar1.Maximum = (ApiService.countJsonResult / 20)+1;
+                    progressBar1.Value = contPag;
+                } while (((ApiService.countJsonResult) / 20) > contPag); // / 20) + 1 >= contPag);
+
+                MessageBox.Show("Consulta concluída!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}", "API Request Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Erro: {ex.Message}", "Erro ao realizar API Request", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -47,6 +69,11 @@ namespace proj_casa_dos_dados
         private void btn_gerarExcel_Click(object sender, EventArgs e)
         {
             gerarExcel.excelProcess(this);
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
