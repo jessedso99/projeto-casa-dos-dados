@@ -52,6 +52,7 @@
             // 
             // btn_gerarExcel
             // 
+            btn_gerarExcel.Enabled = false;
             btn_gerarExcel.Location = new Point(401, 126);
             btn_gerarExcel.Name = "btn_gerarExcel";
             btn_gerarExcel.Size = new Size(75, 23);

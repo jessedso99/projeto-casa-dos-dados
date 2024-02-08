@@ -8,6 +8,7 @@ namespace proj_casa_dos_dados
     public partial class Form1 : Form
     {
         private List<string> apiResponses;
+        public int ProgressBarValue { get; set; }
 
         public Form1()
         {
@@ -49,11 +50,14 @@ namespace proj_casa_dos_dados
                     contPag++;
 
                     // Setando o valores para a Progressbar
-                    progressBar1.Maximum = (ApiService.countJsonResult / 20)+1;
+                    progressBar1.Maximum = (ApiService.countJsonResult / 20) + 1;
                     progressBar1.Value = contPag;
                 } while (((ApiService.countJsonResult) / 20) > contPag); // / 20) + 1 >= contPag);
 
                 MessageBox.Show("Consulta concluída!");
+                progressBar1.Value = 0;
+                btn_gerarExcel.Enabled = true;
+
             }
             catch (Exception ex)
             {
@@ -68,7 +72,12 @@ namespace proj_casa_dos_dados
 
         private void btn_gerarExcel_Click(object sender, EventArgs e)
         {
+            progressBar1.Maximum = ApiService.countJsonResult + 1;
             gerarExcel.excelProcess(this);
+        }
+        public void UpdateProgressBar(int progressValue)
+        {
+            progressBar1.Value = progressValue;
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)

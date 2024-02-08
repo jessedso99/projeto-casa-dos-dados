@@ -107,6 +107,7 @@ namespace proj_casa_dos_dados
                 // Criando os links de cada página a ser consultada
                 string linkRaizSolucao = "https://casadosdados.com.br/solucao/cnpj";
 
+                //Form1 form = new Form1();
                 for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
                     string razaoSocialNovo = ReplaceCharacters(worksheet.Cells[row, 4].Value.ToString());
@@ -114,6 +115,10 @@ namespace proj_casa_dos_dados
 
                     string linkSolucaoCnpj = $"{linkRaizSolucao}/{razaoSocialNovo}-{cnpjNovo}";
                     worksheet.Cells[row, 19].Value = linkSolucaoCnpj;
+
+                    //form.UpdateProgressBar(row - 1);
+                    //Application.DoEvents();
+
                 }
 
                 // Chamando o webscraper para recuperar os dados (E-MAIL e Telefone)
