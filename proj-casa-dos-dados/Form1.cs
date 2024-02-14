@@ -2,6 +2,10 @@ using System.Windows.Forms.Design;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OfficeOpenXml;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace proj_casa_dos_dados
 {
@@ -18,7 +22,12 @@ namespace proj_casa_dos_dados
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            List<string> listaDeEstados = new List<string> { "RO", "AC", "AM", "RR", "PA", "AP", "TO", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA", "MG", "ES", "RJ", "SP", "PR", "SC", "RS", "MS", "MT", "GO", "DF" };
 
+            foreach (string item in listaDeEstados)
+            {
+                checkedListBox1.Items.Add(item);
+            }
         }
 
         private async void btnApiRequest_Click(object sender, EventArgs e)
@@ -26,9 +35,10 @@ namespace proj_casa_dos_dados
             try
             {
                 int contPag = 0;
+
+                //Data de abertura - Start
                 DateTime DataDeAbertura = dateTimePicker1.Value;
                 string strDataDeAbertura = DataDeAbertura.ToString("yyyy-MM-dd");
-
                 if (radioButton1.Checked)
                 {
                     ApiService.dataDeAbertura = strDataDeAbertura;
@@ -42,6 +52,44 @@ namespace proj_casa_dos_dados
                     radioButton1.Checked = true;
                     ApiService.dataDeAbertura = strDataDeAbertura;
                 }
+                
+                //Data de abertura - End
+                DateTime DataDeAberturaEnd = dateTimePicker2.Value;
+                string strDataDeAberturaEnd = DataDeAberturaEnd.ToString("yyyy-MM-dd");
+                ApiService.dataDeAberturaEnd = strDataDeAberturaEnd;
+
+                //Setando as UF selecionadas ou Todos os Estados para a Consulta do ApiService
+                List<string> ListaUF_Selecionadas = new List<string>();
+                if (radioButton5.Checked == true)
+                {
+                    foreach (var item in checkedListBox1.CheckedItems)
+                    {
+                        ListaUF_Selecionadas.Add(item.ToString());
+                    }
+                    // Serialize the List<string> to JSON array format
+                    string ufJsonArray = JsonConvert.SerializeObject(ListaUF_Selecionadas);
+                    ApiService.UF_Selecionados = ufJsonArray;
+                }
+                else
+                {
+                    string ufJsonArrayVoid = "[]";
+                    ApiService.UF_Selecionados = ufJsonArrayVoid;
+                }
+
+                //Realizar Web Scrap?
+                if (radioButtonSim.Checked)
+                {
+                    gerarExcel.performWebScraper = true;
+                }
+                else if (radioButtonNao.Checked)
+                {
+                    gerarExcel.performWebScraper = false;
+                }
+                else
+                {
+                    radioButtonNao.Checked = true;
+                    gerarExcel.performWebScraper = false;
+                }
 
                 // Realizando o request a agregando as responses na lista apiResponses
                 do
@@ -52,7 +100,7 @@ namespace proj_casa_dos_dados
                     // Setando o valores para a Progressbar
                     progressBar1.Maximum = (ApiService.countJsonResult / 20) + 1;
                     progressBar1.Value = contPag;
-                } while (((ApiService.countJsonResult) / 20) > contPag); // / 20) + 1 >= contPag);
+                } while (((ApiService.countJsonResult) / 20) > contPag);
 
                 MessageBox.Show("Consulta concluída!");
                 progressBar1.Value = 0;
@@ -70,19 +118,43 @@ namespace proj_casa_dos_dados
             return apiResponses;
         }
 
-        private void btn_gerarExcel_Click(object sender, EventArgs e)
+        private async void btn_gerarExcel_Click(object sender, EventArgs e)
         {
-            progressBar1.Maximum = ApiService.countJsonResult + 1;
-            gerarExcel.excelProcess(this);
-        }
-        public void UpdateProgressBar(int progressValue)
-        {
-            progressBar1.Value = progressValue;
+            btn_gerarExcel.Enabled = false;
+            var progress = new Progress<int>(value =>
+            {
+                progressBar1.Value = value;
+            });
+
+            progressBar1.Maximum = 100;
+            await Task.Run(() => gerarExcel.excelProcess(this, progress));
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void btn_export_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButton5_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton5.Checked == true)
+            {
+                checkedListBox1.Enabled = true;
+            }
+            else
+            {
+                checkedListBox1.Enabled = false;
+            }
         }
     }
 }

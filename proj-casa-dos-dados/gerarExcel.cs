@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using System;
+using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ using System.Windows.Forms.Design;
 using HtmlAgilityPack;
 using System.Data.Common;
 using proj_casa_dos_dados.EstruturaDadosCnpj;
+using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 
 namespace proj_casa_dos_dados
 {
@@ -19,15 +22,17 @@ namespace proj_casa_dos_dados
     {
         private static int contCnpjResponses;
         private static int row = 2;
-        public static void excelProcess(Form1 myForm)
+        public static bool performWebScraper { get; set; }
+
+        public static void excelProcess(Form1 myForm, IProgress<int> progress)
         {
             List<string> cnpjResponses = myForm.GetApiResponses();
             contCnpjResponses = cnpjResponses.Count;
 
-            ExportToExcel(cnpjResponses);
+            ExportToExcel(cnpjResponses, progress);
         }
 
-        static async Task<string> ExportToExcel(List<string> cnpjResponses)
+        static async Task<ExcelPackage> ExportToExcel(List<string> cnpjResponses, IProgress<int> Progress)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Definições do ExcelPackage (consultar documentação)
             using (ExcelPackage excelPackage = new ExcelPackage())
@@ -107,7 +112,6 @@ namespace proj_casa_dos_dados
                 // Criando os links de cada página a ser consultada
                 string linkRaizSolucao = "https://casadosdados.com.br/solucao/cnpj";
 
-                //Form1 form = new Form1();
                 for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
                     string razaoSocialNovo = ReplaceCharacters(worksheet.Cells[row, 4].Value.ToString());
@@ -116,31 +120,41 @@ namespace proj_casa_dos_dados
                     string linkSolucaoCnpj = $"{linkRaizSolucao}/{razaoSocialNovo}-{cnpjNovo}";
                     worksheet.Cells[row, 19].Value = linkSolucaoCnpj;
 
-                    //form.UpdateProgressBar(row - 1);
-                    //Application.DoEvents();
-
+                    Progress.Report((row / ApiService.countJsonResult) * 100);
                 }
 
                 // Chamando o webscraper para recuperar os dados (E-MAIL e Telefone)
-                WebScraper webScraperObj = new WebScraper();
-                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                if (performWebScraper == true)
                 {
-                    object cellValue = worksheet.Cells[row, 19].Value;
-                    string stringValue = cellValue?.ToString();
-
-                    string[] labels = { "E-MAIL", "Telefone" };
-                    int scrapeColIndex = 17;
-                    foreach (string label in labels)
+                    WebScraper webScraperObj = new WebScraper();
+                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
-                        worksheet.Cells[row, scrapeColIndex].Value = await webScraperObj.ScrapeCnpjDados(stringValue, label);
-                        scrapeColIndex++;
+                        object cellValue = worksheet.Cells[row, 19].Value;
+                        string stringValue = cellValue?.ToString();
+
+                        string[] labels = { "E-MAIL", "Telefone" };
+                        int scrapeColIndex = 17;
+                        foreach (string label in labels)
+                        {
+                            worksheet.Cells[row, scrapeColIndex].Value = await webScraperObj.ScrapeCnpjDados(stringValue, label);
+                            scrapeColIndex++;
+                        }
+                        Progress.Report((row / ApiService.countJsonResult) * 100);
                     }
                 }
 
-                //Salvar o ExcelPackage como arquivo Excel (xlsx)
-                SaveExcelFile(excelPackage);
+                // Salvar o ExcelPackage em um arquivo Excel.
+                try
+                {
+                    await ExcelExporter.ExportToExcel(excelPackage);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}");
+                }
+
+                return excelPackage;
             }
-            return "Processo Encerrado";
         }
 
         // Regex para auxiliar na criação dos links das páginas de cada CNPJ
@@ -152,30 +166,6 @@ namespace proj_casa_dos_dados
             result = result.ToLower();
 
             return result;
-        }
-
-        // Salva o ExcelPackage no path selecionado
-        private static void SaveExcelFile(ExcelPackage excelPackage)
-        {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
-                saveFileDialog.Title = "Salvar resultados da consulta";
-                saveFileDialog.DefaultExt = "xlsx";
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        excelPackage.SaveAs(new System.IO.FileInfo(saveFileDialog.FileName));
-                        MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Erro ao tentar salvar o arquivo: {ex.Message}", "Erro");
-                    }
-                }
-            }
         }
     }
 }
