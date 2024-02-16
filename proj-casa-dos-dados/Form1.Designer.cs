@@ -46,10 +46,15 @@
             groupBox4 = new GroupBox();
             radioButton5 = new RadioButton();
             radioButton4 = new RadioButton();
+            groupBox5 = new GroupBox();
+            rBtn_ambosMei = new RadioButton();
+            rBtn_excluirMei = new RadioButton();
+            rBtn_somenteMei = new RadioButton();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox4.SuspendLayout();
+            groupBox5.SuspendLayout();
             SuspendLayout();
             // 
             // btnApiRequest
@@ -196,7 +201,7 @@
             groupBox3.Controls.Add(radioButtonNao);
             groupBox3.Location = new Point(157, 169);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(185, 46);
+            groupBox3.Size = new Size(185, 66);
             groupBox3.TabIndex = 16;
             groupBox3.TabStop = false;
             groupBox3.Text = "Buscar Email e Telefone?";
@@ -236,11 +241,56 @@
             radioButton4.Text = "Todos os Estados";
             radioButton4.UseVisualStyleBackColor = true;
             // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(rBtn_ambosMei);
+            groupBox5.Controls.Add(rBtn_excluirMei);
+            groupBox5.Controls.Add(rBtn_somenteMei);
+            groupBox5.Location = new Point(157, 241);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(185, 104);
+            groupBox5.TabIndex = 18;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "MEI";
+            // 
+            // rBtn_ambosMei
+            // 
+            rBtn_ambosMei.AutoSize = true;
+            rBtn_ambosMei.Checked = true;
+            rBtn_ambosMei.Location = new Point(6, 22);
+            rBtn_ambosMei.Name = "rBtn_ambosMei";
+            rBtn_ambosMei.Size = new Size(63, 19);
+            rBtn_ambosMei.TabIndex = 2;
+            rBtn_ambosMei.TabStop = true;
+            rBtn_ambosMei.Text = "Ambos";
+            rBtn_ambosMei.UseVisualStyleBackColor = true;
+            // 
+            // rBtn_excluirMei
+            // 
+            rBtn_excluirMei.AutoSize = true;
+            rBtn_excluirMei.Location = new Point(6, 72);
+            rBtn_excluirMei.Name = "rBtn_excluirMei";
+            rBtn_excluirMei.Size = new Size(83, 19);
+            rBtn_excluirMei.TabIndex = 1;
+            rBtn_excluirMei.Text = "Excluir MEI";
+            rBtn_excluirMei.UseVisualStyleBackColor = true;
+            // 
+            // rBtn_somenteMei
+            // 
+            rBtn_somenteMei.AutoSize = true;
+            rBtn_somenteMei.Location = new Point(6, 47);
+            rBtn_somenteMei.Name = "rBtn_somenteMei";
+            rBtn_somenteMei.Size = new Size(95, 19);
+            rBtn_somenteMei.TabIndex = 0;
+            rBtn_somenteMei.Text = "Somente MEI";
+            rBtn_somenteMei.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(354, 414);
+            Controls.Add(groupBox5);
             Controls.Add(groupBox4);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
@@ -261,6 +311,8 @@
             groupBox3.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -284,5 +336,9 @@
         private GroupBox groupBox4;
         private RadioButton radioButton5;
         private RadioButton radioButton4;
+        private GroupBox groupBox5;
+        private RadioButton rBtn_excluirMei;
+        private RadioButton rBtn_somenteMei;
+        private RadioButton rBtn_ambosMei;
     }
 }

@@ -66,26 +66,3 @@ namespace proj_casa_dos_dados
     }
 }
 
-// Salva o ExcelPackage no path selecionado
-//private static void SaveExcelFile(ExcelPackage excelPackage)
-//{
-//using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-//{
-//    saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
-//    saveFileDialog.Title = "Salvar resultados da consulta";
-//    saveFileDialog.DefaultExt = "xlsx";
-
-//    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-//    {
-//        try
-//        {
-//            excelPackage.SaveAs(new System.IO.FileInfo(saveFileDialog.FileName));
-//            MessageBox.Show("Arquivo salvo com sucesso!", "Sucesso");
-//        }
-//        catch (Exception ex)
-//        {
-//            MessageBox.Show($"Erro ao tentar salvar o arquivo: {ex.Message}", "Erro");
-//        }
-//    }
-//}
-//}

@@ -52,7 +52,7 @@ namespace proj_casa_dos_dados
                     radioButton1.Checked = true;
                     ApiService.dataDeAbertura = strDataDeAbertura;
                 }
-                
+
                 //Data de abertura - End
                 DateTime DataDeAberturaEnd = dateTimePicker2.Value;
                 string strDataDeAberturaEnd = DataDeAberturaEnd.ToString("yyyy-MM-dd");
@@ -89,6 +89,28 @@ namespace proj_casa_dos_dados
                 {
                     radioButtonNao.Checked = true;
                     gerarExcel.performWebScraper = false;
+                }
+
+                //Somente MEI ou Excluir MEI?
+                if (rBtn_somenteMei.Checked)
+                {
+                    ApiService.somenteMEI = "true";
+                    ApiService.excluirMEI = "false";
+                }
+                else if (rBtn_excluirMei.Checked)
+                {
+                    ApiService.somenteMEI = "false";
+                    ApiService.excluirMEI = "true";
+                }
+                else if (rBtn_ambosMei.Checked)
+                {
+                    ApiService.somenteMEI = "false";
+                    ApiService.excluirMEI = "false";
+                }
+                else
+                {
+                    ApiService.somenteMEI = "true";
+                    ApiService.excluirMEI = "true";
                 }
 
                 // Realizando o request a agregando as responses na lista apiResponses

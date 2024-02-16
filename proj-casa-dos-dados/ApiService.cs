@@ -21,7 +21,9 @@ namespace proj_casa_dos_dados
         static int countPag = 0;
         public static string? dataDeAbertura { get; set; }
         public static string? dataDeAberturaEnd { get; set; }
-        public static string? UF_Selecionados { get; set; }//= new List<string>{ "AC" };
+        public static string? UF_Selecionados { get; set; }
+        public static string somenteMEI { get; set; }
+        public static string excluirMEI { get; set; }
 
         public static async Task<string> PerformApiRequestAsync()
         {
@@ -32,7 +34,7 @@ namespace proj_casa_dos_dados
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
 
                 countPag++;
-                var json = "{\"query\":{\"termo\":[],\"atividade_principal\":[],\"natureza_juridica\":[],\"uf\":" + UF_Selecionados + ",\"municipio\":[],\"bairro\":[],\"situacao_cadastral\":\"ATIVA\",\"cep\":[],\"ddd\":[]},\"range_query\":{\"data_abertura\":{\"lte\":\"" + dataDeAberturaEnd + "\",\"gte\":\"" + dataDeAbertura + "\"},\"capital_social\":{\"lte\":null,\"gte\":null}},\"extras\":{\"somente_mei\":false,\"excluir_mei\":true,\"com_email\":true,\"incluir_atividade_secundaria\":false,\"com_contato_telefonico\":true,\"somente_fixo\":false,\"somente_celular\":false,\"somente_matriz\":false,\"somente_filial\":false},\"page\":" + countPag + "}";
+                var json = "{\"query\":{\"termo\":[],\"atividade_principal\":[],\"natureza_juridica\":[],\"uf\":" + UF_Selecionados + ",\"municipio\":[],\"bairro\":[],\"situacao_cadastral\":\"ATIVA\",\"cep\":[],\"ddd\":[]},\"range_query\":{\"data_abertura\":{\"lte\":\"" + dataDeAberturaEnd + "\",\"gte\":\"" + dataDeAbertura + "\"},\"capital_social\":{\"lte\":null,\"gte\":null}},\"extras\":{\"somente_mei\":" + somenteMEI + ",\"excluir_mei\":" + excluirMEI + ",\"com_email\":true,\"incluir_atividade_secundaria\":false,\"com_contato_telefonico\":true,\"somente_fixo\":false,\"somente_celular\":false,\"somente_matriz\":false,\"somente_filial\":false},\"page\":" + countPag + "}";
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
                 string apiUrl = "https://api.casadosdados.com.br/v2/public/cnpj/search";
 
